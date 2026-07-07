@@ -1,0 +1,19 @@
+/* ---------- responsive layout ---------- */
+.product-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 26px;
+}
+.nav-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.admin-prod-row { display: flex; align-items: center; gap: 12px; }
+.cart-line { display: flex; gap: 14px; align-items: center; }
+
+@media (max-width: 760px) {
+  .product-layout { grid-template-columns: 1fr; gap: 20px; }
+  .nav-links { gap: 12px; }
+  .nav-links a, .nav-links button { font-size: 13px !important; }
+  .admin-prod-row { flex-wrap: wrap; row-gap: 6px; }
+  .admin-prod-row .grow-sm { flex: 1 1 100%; }
+  .cart-line { flex-wrap: wrap; }
+  .hide-sm { display: none !important; }
+}

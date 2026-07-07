@@ -10,7 +10,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const p = await getProduct(params.id);
-  return { title: p ? `${p.name} — Tanjai Silks` : "Saree — Tanjai Silks" };
+  return { title: p ? `${p.name} — Kaarugam Silks` : "Saree — Kaarugam Silks" };
 }
 
 export default async function ProductPage({ params }: { params: { id: string } }) {

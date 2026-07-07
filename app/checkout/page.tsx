@@ -30,7 +30,7 @@ export default function CheckoutPage() {
       if (order.provider === "razorpay" && (window as any).Razorpay) {
         const rzp = new (window as any).Razorpay({
           key: order.keyId, amount: order.amount, currency: order.currency, order_id: order.gatewayOrderId,
-          name: "Tanjai Silks", description: order.orderId, prefill: { name: form.name, email: form.email, contact: form.phone },
+          name: "Kaarugam Silks", description: order.orderId, prefill: { name: form.name, email: form.email, contact: form.phone },
           theme: { color: MAROON },
           handler: (r: any) => finish(order.orderId, r.razorpay_payment_id, r.razorpay_signature).catch((e) => setErr(e.message)),
           modal: { ondismiss: () => setBusy(false) },

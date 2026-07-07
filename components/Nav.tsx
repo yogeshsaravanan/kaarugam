@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image"; // Ensure Next.js Image is imported
 import { useRouter } from "next/navigation";
 import { useCart } from "./CartContext";
 import { useAuth } from "./useAuth";
@@ -10,17 +11,45 @@ export default function Nav() {
   const { count } = useCart();
   const { user, logout, enabled } = useAuth();
   const router = useRouter();
+
+  // Define a shared logo dimension for a perfect circle
+  const logoSize = 60; // Adjust as needed
+
   return (
     <div style={{ position: "sticky", top: 0, zIndex: 50, background: PAPER, borderBottom: `1px solid ${GOLD}55` }}>
-      {/* <div style={{ maxWidth: 1100, margin: "0 auto", padding: "14px 18px", display: "flex", alignItems: "center", justifyContent: "space-between" }}> */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+        
+        {/* Logo and Brand Name with circular container */}
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", color: INK }}>
+          
+          {/* 1. Add this wrapper div to create the circle */}
+          <div style={{
+            width: `${logoSize}px`,
+            height: `${logoSize}px`,
+            borderRadius: "50%", // This creates the circular mask
+            overflow: "hidden", // Important: Clips the square image content to the circle
+            display: "flex", // Centers the image inside the circle
+            alignItems: "center",
+            justifyContent: "center",
+            border: `2px solid ${MAROON}`, // Optional: Adds a matching border for definition
+            boxShadow: "0 2px 5px rgba(0,0,0,0.2)" // Optional: Adds a subtle shadow
+          }}>
+            <Image 
+              src="/logo.png" // Path to your compressed logo in the public folder
+              alt="Kaarugam Silks Logo"
+              width={logoSize + 10} // Make the image slightly larger to ensure full coverage
+              height={logoSize + 10}
+              priority // For performance
+              style={{ objectFit: "cover" }} // This crops the image to fill the container
+            />
+          </div>
 
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "14px 16px", display: "flex",
-         alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-        <Link href="/" style={{ fontFamily: "Marcellus, serif", fontSize: 22, letterSpacing: 0.5, color: INK }}>
-          Tanjai <span style={{ color: MAROON }}>Silks</span>
+          <span style={{ fontFamily: "Marcellus, serif", fontSize: 22, letterSpacing: 0.5 }}>
+            Kaarugam <span style={{ color: MAROON }}>Silks</span>
+          </span>
         </Link>
-        {/* <div style={{ display: "flex", gap: 20, alignItems: "center" }}> */}
-        <div className="nav-links">
+
+        <div className="nav-links" style={{ display: "flex", gap: 20, alignItems: "center" }}>
           <Link href="/" style={{ fontSize: 14, color: INK }}>Shop</Link>
           <Link href="/orders" style={{ fontSize: 14, color: INK }}>Orders</Link>
           <Link href="/cart" style={{ fontSize: 14, color: INK }}>

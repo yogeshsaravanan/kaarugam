@@ -40,7 +40,7 @@ export default function HomeGrid({ products, hero = true }: { products: Product[
           >
             <div style={{ flex: "1 1 380px", paddingBottom: 64 }}>
               <div style={{ fontSize: 11, letterSpacing: "0.32em", textTransform: "uppercase", color: ZARI, marginBottom: 18 }}>
-                Kanchipuram heritage weaves
+                Heritage in every thread
               </div>
               <h1
                 style={{
@@ -50,7 +50,7 @@ export default function HomeGrid({ products, hero = true }: { products: Product[
               >
                 The silk of
                 <br />
-                Kanchipuram
+                TamilNadu
               </h1>
               <p
                 style={{

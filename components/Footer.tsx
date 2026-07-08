@@ -40,7 +40,7 @@ export default function Footer() {
           <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 0.1, color: GOLD, marginBottom: 16 }}>Contact Us</div>
           <div style={{ fontSize: 13, marginBottom: 10 }}>Need help choosing the perfect weave?</div>
           <a 
-            href="https://wa.me/919876543210" // REPLACE WITH YOUR ACTUAL WHATSAPP NUMBER
+            href="https://wa.me/7708788959"
             target="_blank"
             rel="noopener noreferrer"
             style={{ 

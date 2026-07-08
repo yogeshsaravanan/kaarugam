@@ -1,4 +1,21 @@
 /* ---------- responsive layout ---------- */
+
+/* ---------- PREVENT X-AXIS SCROLLBAR ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Force inputs and textareas to never exceed their parent container */
+input, textarea, select {
+  max-width: 100%;
+}
+
+
 .product-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

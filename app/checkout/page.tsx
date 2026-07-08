@@ -42,20 +42,20 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1000, margin: "0 auto", padding: "36px 18px" }}>
+    <div style={{ maxWidth: 640, margin: "0 auto", padding: "26px 18px" }}>
       <RazorpayScript />
       <div style={{ fontFamily: "Marcellus, serif", fontSize: 28, marginBottom: 30 }}>Checkout</div>
       
-      {/* NEW: 2 Column Layout for Desktop */}
-      <div style={{ display: "flex", gap: 40, alignItems: "flex-start" }}>
+      {/* Added className="checkout-grid" here */}
+      <div className="checkout-grid" style={{ display: "flex", gap: 40, alignItems: "flex-start" }}>
         
         {/* Left Column: Form */}
-        <div style={{ flex: 1 }}>
+        <div className="checkout-form-col" style={{ flex: 1 }}>
           <div style={{ display: "grid", gap: 14, marginBottom: 24 }}>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Full Name *</label>
               <input placeholder="As on ID" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={input} />
-            </div>
+      </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Phone Number *</label>
               <input placeholder="10-digit number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={input} />
@@ -83,15 +83,14 @@ export default function CheckoutPage() {
               <input type="radio" checked={method === "cod"} onChange={() => setMethod("cod")} style={{ marginTop: 2 }} />
               <div>
                 <div style={{ fontSize: 14, color: INK }}>Cash on delivery</div>
-                {/* NEW: COD Warning */}
-                <div style={{ fontSize: 11, color: "#B45309", marginTop: 2 }}>Note: COD orders may require phone verification. ₹500 extra fee applies for orders above ₹10,000.</div>
+                {/* <div style={{ fontSize: 11, color: "#B45309", marginTop: 2 }}>Note: COD orders may require phone verification. ₹500 extra fee applies for orders above ₹10,000.</div> */}
               </div>
-            </label>
+          </label>
           </div>
         </div>
 
         {/* Right Column: Sticky Summary */}
-        <div style={{ width: 340, flexShrink: 0, position: "sticky", top: 90, background: PAPER, border: `1px solid ${GOLD}33`, borderRadius: 12, padding: 20 }}>
+        <div className="checkout-summary-col" style={{ width: 340, flexShrink: 0, position: "sticky", top: 90, background: PAPER, border: `1px solid ${GOLD}33`, borderRadius: 12, padding: 20 }}>
           <div style={{ fontFamily: "Marcellus, serif", fontSize: 18, marginBottom: 16, color: INK }}>Order Summary</div>
           
           <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 16 }}>
@@ -103,8 +102,8 @@ export default function CheckoutPage() {
                 </div>
                 <div style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{rupees(c.price * c.qty)}</div>
               </div>
-            ))}
-          </div>
+        ))}
+      </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, fontWeight: 700, marginTop: 10, paddingTop: 12, borderTop: `2px solid ${INK}15` }}>
             <span>Total</span>
@@ -120,6 +119,22 @@ export default function CheckoutPage() {
         </div>
 
       </div>
+
+      {/* MAGIC HAPPENS HERE: Next.js scoped responsive styles */}
+      <style jsx>{`
+        @media (max-width: 760px) {
+          .checkout-grid {
+            flex-direction: column !important;
+            gap: 24px !important;
+          }
+          .checkout-summary-col {
+            width: 100% !important;
+            position: relative !important; /* Unsticks it on mobile so it flows naturally */
+            top: auto !important;
+            order: -1; /* Moves summary to the TOP on mobile (better UX) */
+          }
+        }
+      `}</style>
     </div>
   );
 }

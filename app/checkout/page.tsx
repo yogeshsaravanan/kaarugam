@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { solidBtn, input } from "@/components/ui";
 import RazorpayScript from "@/components/RazorpayScript";
 import { rupees } from "@/lib/money";
-import { INK, GOLD, MAROON, TEAL } from "@/components/theme";
+import { INK, GOLD, MAROON, TEAL, PAPER } from "@/components/theme";
 
 export default function CheckoutPage() {
   const { items, total, clear } = useCart();
@@ -42,36 +42,84 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "26px 18px" }}>
+    <div style={{ maxWidth: 1000, margin: "0 auto", padding: "36px 18px" }}>
       <RazorpayScript />
-      <div style={{ fontFamily: "Marcellus, serif", fontSize: 26, marginBottom: 18 }}>Checkout</div>
-      <div style={{ display: "grid", gap: 10, marginBottom: 20 }}>
-        <input placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={input} />
-        <input placeholder="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={input} />
-        <input placeholder="Email (for receipt)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={input} />
-        <textarea placeholder="Delivery address" rows={3} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} style={{ ...input, resize: "vertical" }} />
-      </div>
-      <div style={{ fontSize: 13, opacity: 0.7, marginBottom: 8 }}>Payment method</div>
-      <div style={{ display: "grid", gap: 8, marginBottom: 20 }}>
-        {[["online", "Pay online (UPI / Card / Netbanking)"], ["cod", "Cash on delivery"]].map(([k, label]) => (
-          <label key={k} style={{ display: "flex", alignItems: "center", gap: 10, border: `1px solid ${method === k ? MAROON : "#D8CBB0"}`, borderRadius: 8, padding: "10px 12px", cursor: "pointer" }}>
-            <input type="radio" checked={method === k} onChange={() => setMethod(k)} /><span style={{ fontSize: 13.5 }}>{label}</span>
-          </label>
-        ))}
-      </div>
-      <div style={{ border: `1px solid ${GOLD}33`, borderRadius: 10, padding: 14, marginBottom: 20 }}>
-        {items.map((c) => (
-          <div key={c.lineId} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-            <span>{c.name} × {c.qty}</span><span>{rupees(c.price * c.qty)}</span>
+      <div style={{ fontFamily: "Marcellus, serif", fontSize: 28, marginBottom: 30 }}>Checkout</div>
+      
+      {/* NEW: 2 Column Layout for Desktop */}
+      <div style={{ display: "flex", gap: 40, alignItems: "flex-start" }}>
+        
+        {/* Left Column: Form */}
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "grid", gap: 14, marginBottom: 24 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Full Name *</label>
+              <input placeholder="As on ID" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={input} />
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Phone Number *</label>
+              <input placeholder="10-digit number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={input} />
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Email (for receipt)</label>
+              <input placeholder="optional" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={input} />
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Delivery Address *</label>
+              <textarea placeholder="Full address with Pincode" rows={4} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} style={{ ...input, resize: "vertical" }} />
+            </div>
           </div>
-        ))}
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 700, marginTop: 8 }}><span>Total</span><span>{rupees(total)}</span></div>
+          
+          <div style={{ fontSize: 13, fontWeight: 600, color: INK, marginBottom: 10 }}>Payment method</div>
+          <div style={{ display: "grid", gap: 10, marginBottom: 24 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 12, border: `1px solid ${method === "online" ? MAROON : "#D8CBB0"}`, borderRadius: 8, padding: "14px", cursor: "pointer", background: method === "online" ? `${MAROON}08` : "transparent" }}>
+              <input type="radio" checked={method === "online"} onChange={() => setMethod("online")} />
+              <div>
+                <div style={{ fontSize: 14, color: INK }}>Pay online (UPI / Card / Netbanking)</div>
+                <div style={{ fontSize: 11, color: TEAL, marginTop: 2 }}>Secure & instant confirmation</div>
+              </div>
+            </label>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 12, border: `1px solid ${method === "cod" ? MAROON : "#D8CBB0"}`, borderRadius: 8, padding: "14px", cursor: "pointer", background: method === "cod" ? `${MAROON}08` : "transparent" }}>
+              <input type="radio" checked={method === "cod"} onChange={() => setMethod("cod")} style={{ marginTop: 2 }} />
+              <div>
+                <div style={{ fontSize: 14, color: INK }}>Cash on delivery</div>
+                {/* NEW: COD Warning */}
+                <div style={{ fontSize: 11, color: "#B45309", marginTop: 2 }}>Note: COD orders may require phone verification. ₹500 extra fee applies for orders above ₹10,000.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        {/* Right Column: Sticky Summary */}
+        <div style={{ width: 340, flexShrink: 0, position: "sticky", top: 90, background: PAPER, border: `1px solid ${GOLD}33`, borderRadius: 12, padding: 20 }}>
+          <div style={{ fontFamily: "Marcellus, serif", fontSize: 18, marginBottom: 16, color: INK }}>Order Summary</div>
+          
+          <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 16 }}>
+            {items.map((c) => (
+              <div key={c.lineId} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10, paddingBottom: 10, borderBottom: `1px solid ${GOLD}15` }}>
+                <div style={{ paddingRight: 10 }}>
+                  <div style={{ fontWeight: 500, color: INK }}>{c.name}</div>
+                  <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>Qty: {c.qty}</div>
+                </div>
+                <div style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{rupees(c.price * c.qty)}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, fontWeight: 700, marginTop: 10, paddingTop: 12, borderTop: `2px solid ${INK}15` }}>
+            <span>Total</span>
+            <span style={{ color: MAROON }}>{rupees(total)}</span>
+          </div>
+
+          {err && <div style={{ color: MAROON, fontSize: 12, marginTop: 14, background: `${MAROON}10`, padding: 10, borderRadius: 6 }}>{err}</div>}
+          
+          <button disabled={!canPay || busy} onClick={pay} style={{ ...solidBtn, width: "100%", marginTop: 18, padding: "14px", fontSize: 14, opacity: canPay && !busy ? 1 : 0.5 }}>
+            {busy ? "Processing…" : method === "cod" ? `Place COD Order` : `Pay ${rupees(total)}`}
+          </button>
+          <div style={{ fontSize: 10, color: "#888", marginTop: 10, textAlign: "center" }}>Amount is verified securely on our servers.</div>
+        </div>
+
       </div>
-      {err && <div style={{ color: MAROON, fontSize: 13, marginBottom: 10 }}>{err}</div>}
-      <button disabled={!canPay || busy} onClick={pay} style={{ ...solidBtn, width: "100%", opacity: canPay && !busy ? 1 : 0.5 }}>
-        {busy ? "Processing…" : method === "cod" ? `Place order · ${rupees(total)}` : `Pay ${rupees(total)}`}
-      </button>
-      <div style={{ fontSize: 11, color: TEAL, marginTop: 10, textAlign: "center" }}>Amount is verified on the server. In mock mode no real charge is made.</div>
     </div>
   );
 }

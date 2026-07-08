@@ -12,6 +12,14 @@ import { INK, PAPER2, MAROON, GOLD, TEAL } from "@/components/theme";
 
 const PATTERNS: [string, string][] = [["plain", "Plain"], ["temple", "Temple border"], ["check", "Zari check"]];
 
+// Premium Trust Badges Data
+const TRUST_DETAILS = [
+  { label: "Fabric", value: "100% Pure Kanchipuram Silk" },
+  { label: "Weight", value: "Approx 850 grams" },
+  { label: "Inclusions", value: "Unstitched Blouse Piece (0.8m)" },
+  { label: "Dispatch", value: "Ships in 3-5 Business Days" },
+];
+
 export default function ProductClient({
   product, initialReviews,
 }: { product: Product; initialReviews: { reviews: ReviewRow[]; average: number | null; count: number } }) {
@@ -70,15 +78,29 @@ export default function ProductClient({
           <span style={{ fontSize: 12.5, opacity: 0.7 }}>{reviews.count ? `${reviews.average?.toFixed(1)} (${reviews.count})` : "No ratings yet"}</span>
         </div>
         <div style={{ fontSize: 24, color: MAROON, fontWeight: 700, marginTop: 10 }}>{rupees(product.price)}</div>
-        <p style={{ fontSize: 13.5, opacity: 0.8, lineHeight: 1.6 }}>{product.blurb}</p>
+        
+        <p style={{ fontSize: 13.5, opacity: 0.8, lineHeight: 1.7, margin: "12px 0 16px" }}>{product.blurb}</p>
 
-        <div style={{ display: "flex", gap: 10, margin: "16px 0 22px" }}>
+        {/* --- NEW: TRUST ELEMENTS --- */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px", padding: "14px", background: `${MAROON}08`, border: `1px solid ${MAROON}15`, borderRadius: 8, marginBottom: 20 }}>
+          {TRUST_DETAILS.map((item) => (
+            <div key={item.label}>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: 0.1, color: MAROON, fontWeight: 600 }}>{item.label}</div>
+              <div style={{ fontSize: 12.5, color: INK, marginTop: 2 }}>{item.value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", gap: 10, marginBottom: 22 }}>
           <button onClick={() => buy(false)} style={{ ...outlineBtn, flex: 1 }}>Add to cart</button>
           <button onClick={() => buy(true)} style={{ ...solidBtn, flex: 1 }}>Buy now</button>
         </div>
 
         <div style={{ background: "#fff", border: `1px solid ${GOLD}33`, borderRadius: 14, padding: 18 }}>
-          <div style={{ fontFamily: "Marcellus, serif", fontSize: 18, marginBottom: 10 }}>Design studio</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontFamily: "Marcellus, serif", fontSize: 18 }}>Design studio</div>
+            <span style={{ fontSize: 11, color: TEAL, background: `${TEAL}15`, padding: "2px 8px", borderRadius: 20 }}>Optional</span>
+          </div>
           <div style={{ display: "grid", gap: 12 }}>
             <ColorRow label="Saree colour" k="base" />
             <ColorRow label="Border colour" k="border" />
@@ -108,7 +130,7 @@ export default function ProductClient({
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ fontSize: 13, fontWeight: 600 }}>{r.name}</span><Stars value={r.rating} size={13} />
                 </div>
-                <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>{r.text}</div>
+                <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4, lineHeight: 1.5 }}>{r.text}</div>
               </div>
             ))}
           </div>

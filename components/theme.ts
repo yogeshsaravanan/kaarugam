@@ -1,10 +1,14 @@
-export const INK = "#2B1810";
+export const INK = "#241109";
 export const PAPER = "#FBF3E7";
 export const PAPER2 = "#F3E7D3";
+export const IVORY = "#FBF6EC";
+export const CARD = "#FFFDF8";
 export const MAROON = "#8C1F3B";
 export const MAROON_D = "#6E1730";
 export const GOLD = "#C6952F";
 export const GOLD_D = "#A87B22";
+export const ZARI = "#C9A227";
+export const CHAMPAGNE = "#EAD9AC";
 export const TEAL = "#1E6E6A";
 export const SKIN = "#E7B98F";
 

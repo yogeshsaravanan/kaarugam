@@ -48,16 +48,16 @@ export default function AdminProducts() {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-        <div style={{ fontFamily: "Marcellus, serif", fontSize: 20 }}>Products</div>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20 }}>Products</div>
         <button onClick={() => setEdit({ ...blank, id: "new-" + Date.now().toString(36).slice(-4) })} style={solidBtn}>+ Add saree</button>
       </div>
       {msg && <div style={{ fontSize: 13, color: TEAL, marginBottom: 10 }}>{msg}</div>}
 
       <div style={{ display: "grid", gap: 8 }}>
         {rows.map((p) => (
-          <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, border: `1px solid ${GOLD}33`, borderRadius: 10, padding: "10px 12px", background: "#fff" }}>
+          <div key={p.id} className="admin-prod-row" style={{ border: `1px solid ${GOLD}33`, borderRadius: 10, padding: "10px 12px", background: "#fff" }}>
             <span style={{ width: 16, height: 16, borderRadius: 4, background: p.base, border: "1px solid #0002" }} />
-            <span style={{ flex: 1, fontSize: 14 }}>{p.name}</span>
+            <span className="grow-sm" style={{ flex: 1, fontSize: 14 }}>{p.name}</span>
             <span style={{ fontSize: 12, opacity: 0.6, width: 120 }}>{p.category}</span>
             <span style={{ fontSize: 13, color: MAROON, width: 90 }}>₹{(p.price / 100).toLocaleString("en-IN")}</span>
             <span style={{ fontSize: 12, width: 70, color: (p.stock ?? 0) <= 3 ? "#B26B00" : "#333" }}>stock {p.stock}</span>
@@ -69,7 +69,7 @@ export default function AdminProducts() {
       {edit && (
         <div style={{ position: "fixed", inset: 0, background: "#0007", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }} onClick={() => setEdit(null)}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: 12, padding: 18, width: 420, maxWidth: "100%", maxHeight: "90vh", overflow: "auto" }}>
-            <div style={{ fontFamily: "Marcellus, serif", fontSize: 18, marginBottom: 12 }}>Edit saree</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, marginBottom: 12 }}>Edit saree</div>
             <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
               <div style={{ width: 64, height: 84, borderRadius: 8, background: "#F3E7D3", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", flex: "0 0 auto" }}>
                 {edit.imagePath

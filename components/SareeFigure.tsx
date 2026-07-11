@@ -75,7 +75,7 @@ export default function SareeFigure({
           <path d="M146,356 L176,338 L176,352 L150,368 Z" fill={`url(#${uid}-zari)`} />
           <path d="M70,90 Q110,72 150,90 L170,392 Q110,414 50,392 Z" fill={`url(#${uid}-sheen)`} />
           {text ? (
-            <text x="150" y="215" fill={textColor || "#FBF3E7"} fontSize="12" fontFamily="Marcellus, serif" transform="rotate(72 150 215)" opacity="0.95">
+            <text x="150" y="215" fill={textColor || "#FBF3E7"} fontSize="12" fontFamily="'Cormorant Garamond', serif" transform="rotate(72 150 215)" opacity="0.95">
               {text.slice(0, 16)}
             </text>
           ) : null}

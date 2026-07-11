@@ -35,7 +35,8 @@ export default function LoginPage() {
 
   return (
     <div style={{ maxWidth: 380, margin: "0 auto", padding: "34px 18px" }}>
-      <div style={{ fontFamily: "Marcellus, serif", fontSize: 26, marginBottom: 6 }}>{mode === "login" ? "Welcome back" : "Create account"}</div>
+      <div style={{ fontSize: 10.5, letterSpacing: "0.26em", textTransform: "uppercase", color: "#A87B22", marginBottom: 6 }}>Kaarugam Silks</div>
+      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 27, marginBottom: 6 }}>{mode === "login" ? "Welcome back" : "Create account"}</div>
       <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
         <input placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={input} />
         <input placeholder="Password" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} style={input} />

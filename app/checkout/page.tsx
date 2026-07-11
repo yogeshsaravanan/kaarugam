@@ -1,15 +1,22 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartContext";
+import { useAuth } from "@/components/useAuth";
 import { api } from "@/lib/api";
-import { solidBtn, input } from "@/components/ui";
+import { solidBtn, input, PageHeading } from "@/components/ui";
 import RazorpayScript from "@/components/RazorpayScript";
 import { rupees } from "@/lib/money";
-import { INK, GOLD, MAROON, TEAL, PAPER } from "@/components/theme";
+import { INK, MAROON, ZARI } from "@/components/theme";
+
+const label: React.CSSProperties = {
+  fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#A87B22", margin: "18px 0 10px",
+};
 
 export default function CheckoutPage() {
   const { items, total, clear } = useCart();
+  const { user, ready, enabled } = useAuth();
   const router = useRouter();
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "" });
   const [method, setMethod] = useState("online");
@@ -41,100 +48,84 @@ export default function CheckoutPage() {
     } catch (e: any) { setErr(e.message); } finally { setBusy(false); }
   }
 
+  // Orders require an account (issue #1): gate checkout behind sign-in when auth is enabled.
+  if (enabled && ready && !user) {
+    return (
+      <div style={{ maxWidth: 460, margin: "0 auto", padding: "40px 18px" }}>
+        <PageHeading eyebrow="Almost there" title="Sign in to continue" />
+        <p style={{ fontSize: 14, lineHeight: 1.7, color: "#5A4632" }}>
+          Orders are tied to your account so you can track them anywhere.
+          Your cart is saved — sign in or create an account to place the order.
+        </p>
+        <Link href="/login">
+          <button style={{ ...solidBtn, width: "100%", marginTop: 14 }}>Sign in / Create account</button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "26px 18px" }}>
+    <div style={{ maxWidth: 1050, margin: "0 auto", padding: "26px 18px" }}>
       <RazorpayScript />
-      <div style={{ fontFamily: "Marcellus, serif", fontSize: 28, marginBottom: 30 }}>Checkout</div>
-      
-      {/* Added className="checkout-grid" here */}
-      <div className="checkout-grid" style={{ display: "flex", gap: 40, alignItems: "flex-start" }}>
-        
-        {/* Left Column: Form */}
-        <div className="checkout-form-col" style={{ flex: 1 }}>
-          <div style={{ display: "grid", gap: 14, marginBottom: 24 }}>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Full Name *</label>
-              <input placeholder="As on ID" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={input} />
-      </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Phone Number *</label>
-              <input placeholder="10-digit number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={input} />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Email (for receipt)</label>
-              <input placeholder="optional" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={input} />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: INK, marginBottom: 6, display: "block" }}>Delivery Address *</label>
-              <textarea placeholder="Full address with Pincode" rows={4} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} style={{ ...input, resize: "vertical" }} />
+      <PageHeading eyebrow="Secure checkout" title="Checkout" />
+
+      <div className="checkout-layout">
+        {/* left: contact / address / payment */}
+        <div>
+          <div style={label}>Contact information</div>
+          <div style={{ display: "grid", gap: 10 }}>
+            <input placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={input} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <input placeholder="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={input} />
+              <input placeholder="Email (for receipt)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={input} />
             </div>
           </div>
-          
-          <div style={{ fontSize: 13, fontWeight: 600, color: INK, marginBottom: 10 }}>Payment method</div>
-          <div style={{ display: "grid", gap: 10, marginBottom: 24 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 12, border: `1px solid ${method === "online" ? MAROON : "#D8CBB0"}`, borderRadius: 8, padding: "14px", cursor: "pointer", background: method === "online" ? `${MAROON}08` : "transparent" }}>
-              <input type="radio" checked={method === "online"} onChange={() => setMethod("online")} />
-              <div>
-                <div style={{ fontSize: 14, color: INK }}>Pay online (UPI / Card / Netbanking)</div>
-                <div style={{ fontSize: 11, color: TEAL, marginTop: 2 }}>Secure & instant confirmation</div>
-              </div>
-            </label>
-            <label style={{ display: "flex", alignItems: "flex-start", gap: 12, border: `1px solid ${method === "cod" ? MAROON : "#D8CBB0"}`, borderRadius: 8, padding: "14px", cursor: "pointer", background: method === "cod" ? `${MAROON}08` : "transparent" }}>
-              <input type="radio" checked={method === "cod"} onChange={() => setMethod("cod")} style={{ marginTop: 2 }} />
-              <div>
-                <div style={{ fontSize: 14, color: INK }}>Cash on delivery</div>
-                {/* <div style={{ fontSize: 11, color: "#B45309", marginTop: 2 }}>Note: COD orders may require phone verification. ₹500 extra fee applies for orders above ₹10,000.</div> */}
-              </div>
-          </label>
+
+          <div style={label}>Delivery address</div>
+          <textarea placeholder="Full address with pincode" rows={3} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} style={{ ...input, resize: "vertical" }} />
+
+          <div style={label}>Payment method</div>
+          <div style={{ display: "grid", gap: 8 }}>
+            {[["online", "Pay online", "UPI / Card / Netbanking"], ["cod", "Cash on delivery", "Pay when it arrives"]].map(([k, title, sub]) => (
+              <label key={k} style={{
+                display: "flex", alignItems: "center", gap: 12, cursor: "pointer",
+                border: `1px solid ${method === k ? MAROON : "#DCCBA8"}`,
+                background: method === k ? "#FBF1E9" : "#FFFDF8", borderRadius: 4, padding: "12px 14px",
+              }}>
+                <input type="radio" checked={method === k} onChange={() => setMethod(k)} />
+                <span>
+                  <span style={{ fontSize: 13.5, fontWeight: 600, color: INK, display: "block" }}>{title}</span>
+                  <span style={{ fontSize: 11.5, color: "#7A6A52" }}>{sub}</span>
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 
-        {/* Right Column: Sticky Summary */}
-        <div className="checkout-summary-col" style={{ width: 340, flexShrink: 0, position: "sticky", top: 90, background: PAPER, border: `1px solid ${GOLD}33`, borderRadius: 12, padding: 20 }}>
-          <div style={{ fontFamily: "Marcellus, serif", fontSize: 18, marginBottom: 16, color: INK }}>Order Summary</div>
-          
-          <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 16 }}>
-            {items.map((c) => (
-              <div key={c.lineId} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10, paddingBottom: 10, borderBottom: `1px solid ${GOLD}15` }}>
-                <div style={{ paddingRight: 10 }}>
-                  <div style={{ fontWeight: 500, color: INK }}>{c.name}</div>
-                  <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>Qty: {c.qty}</div>
-                </div>
-                <div style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{rupees(c.price * c.qty)}</div>
-              </div>
-        ))}
-      </div>
-
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, fontWeight: 700, marginTop: 10, paddingTop: 12, borderTop: `2px solid ${INK}15` }}>
-            <span>Total</span>
-            <span style={{ color: MAROON }}>{rupees(total)}</span>
+        {/* right: order summary card */}
+        <div style={{ border: `1px solid ${ZARI}44`, background: "#FDF9F1", borderRadius: 6, padding: "20px 20px 18px" }}>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 21, color: INK, marginBottom: 14 }}>Order summary</div>
+          {items.map((c) => (
+            <div key={c.lineId} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 13, padding: "7px 0", borderBottom: `1px solid ${ZARI}22` }}>
+              <span style={{ color: "#3D2A18" }}>{c.name} × {c.qty}</span>
+              <span style={{ whiteSpace: "nowrap" }}>{rupees(c.price * c.qty)}</span>
+            </div>
+          ))}
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "10px 0 2px", color: "#7A6A52" }}>
+            <span>Shipping</span><span>Free above ₹10,000</span>
           </div>
-
-          {err && <div style={{ color: MAROON, fontSize: 12, marginTop: 14, background: `${MAROON}10`, padding: 10, borderRadius: 6 }}>{err}</div>}
-          
-          <button disabled={!canPay || busy} onClick={pay} style={{ ...solidBtn, width: "100%", marginTop: 18, padding: "14px", fontSize: 14, opacity: canPay && !busy ? 1 : 0.5 }}>
-            {busy ? "Processing…" : method === "cod" ? `Place COD Order` : `Pay ${rupees(total)}`}
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16.5, fontWeight: 700, color: INK, padding: "12px 0 4px", borderTop: `1px solid ${ZARI}44`, marginTop: 10 }}>
+            <span>Total</span><span>{rupees(total)}</span>
+          </div>
+          {err && <div style={{ color: MAROON, fontSize: 13, margin: "8px 0" }}>{err}</div>}
+          <button disabled={!canPay || busy} onClick={pay} style={{ ...solidBtn, width: "100%", marginTop: 12, opacity: canPay && !busy ? 1 : 0.5 }}>
+            {busy ? "Processing…" : method === "cod" ? `Place order · ${rupees(total)}` : `Pay ${rupees(total)}`}
           </button>
-          <div style={{ fontSize: 10, color: "#888", marginTop: 10, textAlign: "center" }}>Amount is verified securely on our servers.</div>
+          <div style={{ fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A6E3A", textAlign: "center", marginTop: 12 }}>
+            Amount verified on our servers · Secure payment
+          </div>
         </div>
-
       </div>
-
-      {/* MAGIC HAPPENS HERE: Next.js scoped responsive styles */}
-      <style jsx>{`
-        @media (max-width: 760px) {
-          .checkout-grid {
-            flex-direction: column !important;
-            gap: 24px !important;
-          }
-          .checkout-summary-col {
-            width: 100% !important;
-            position: relative !important; /* Unsticks it on mobile so it flows naturally */
-            top: auto !important;
-            order: -1; /* Moves summary to the TOP on mobile (better UX) */
-          }
-        }
-      `}</style>
     </div>
   );
 }

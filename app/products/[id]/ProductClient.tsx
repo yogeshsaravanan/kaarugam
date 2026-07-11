@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import SareeFigure from "@/components/SareeFigure";
 import ProductImage from "@/components/ProductImage";
@@ -8,17 +9,9 @@ import { useCart } from "@/components/CartContext";
 import { api } from "@/lib/api";
 import { rupees } from "@/lib/money";
 import type { Product, ReviewRow, Design } from "@/lib/types";
-import { INK, PAPER2, MAROON, GOLD, TEAL } from "@/components/theme";
+import { INK, PAPER2, MAROON, GOLD, ZARI } from "@/components/theme";
 
 const PATTERNS: [string, string][] = [["plain", "Plain"], ["temple", "Temple border"], ["check", "Zari check"]];
-
-// Premium Trust Badges Data
-const TRUST_DETAILS = [
-  { label: "Fabric", value: "100% Pure Kanchipuram Silk" },
-  { label: "Weight", value: "Approx 850 grams" },
-  { label: "Inclusions", value: "Unstitched Blouse Piece (0.8m)" },
-  { label: "Dispatch", value: "Ships in 3-5 Business Days" },
-];
 
 export default function ProductClient({
   product, initialReviews,
@@ -30,8 +23,14 @@ export default function ProductClient({
   const [reviews, setReviews] = useState(initialReviews);
   const [rv, setRv] = useState({ name: "", rating: 5, text: "" });
   const [err, setErr] = useState("");
+  const [added, setAdded] = useState(false);
 
-  const buy = (goCheckout: boolean) => { add(product, design); router.push(goCheckout ? "/checkout" : "/cart"); };
+  const buy = (goCheckout: boolean) => {
+    add(product, design);
+    if (goCheckout) { router.push("/checkout"); return; }
+    setAdded(true);
+    setTimeout(() => setAdded(false), 3500);
+  };
 
   const submitReview = async () => {
     if (!rv.text.trim()) return;
@@ -71,35 +70,46 @@ export default function ProductClient({
       </div>
 
       <div>
-        <div style={{ fontSize: 12, color: TEAL, textTransform: "uppercase", letterSpacing: 0.6 }}>{product.category}</div>
-        <div style={{ fontFamily: "Marcellus, serif", fontSize: 28 }}>{product.name}</div>
+        <div style={{ fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#A87B22", marginBottom: 8 }}>
+          <Link href="/" style={{ color: "#A87B22" }}>Collection</Link>
+          <span style={{ opacity: 0.5 }}> / </span>{product.category}
+        </div>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 30, margin: 0, lineHeight: 1.15 }}>{product.name}</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
           <Stars value={Math.round(reviews.average ?? 0)} />
           <span style={{ fontSize: 12.5, opacity: 0.7 }}>{reviews.count ? `${reviews.average?.toFixed(1)} (${reviews.count})` : "No ratings yet"}</span>
         </div>
-        <div style={{ fontSize: 24, color: MAROON, fontWeight: 700, marginTop: 10 }}>{rupees(product.price)}</div>
-        
-        <p style={{ fontSize: 13.5, opacity: 0.8, lineHeight: 1.7, margin: "12px 0 16px" }}>{product.blurb}</p>
+        <div style={{ marginTop: 12 }}>
+          <span style={{ fontSize: 25, color: MAROON, fontWeight: 700 }}>{rupees(product.price)}</span>
+          <div style={{ fontSize: 11.5, color: "#7A6A52", marginTop: 2 }}>Inclusive of all taxes</div>
+        </div>
+        <p style={{ fontSize: 13.5, opacity: 0.8, lineHeight: 1.7 }}>{product.blurb}</p>
 
-        {/* --- NEW: TRUST ELEMENTS --- */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px", padding: "14px", background: `${MAROON}08`, border: `1px solid ${MAROON}15`, borderRadius: 8, marginBottom: 20 }}>
-          {TRUST_DETAILS.map((item) => (
-            <div key={item.label}>
-              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: 0.1, color: MAROON, fontWeight: 600 }}>{item.label}</div>
-              <div style={{ fontSize: 12.5, color: INK, marginTop: 2 }}>{item.value}</div>
+        <div style={{ border: `1px solid ${ZARI}33`, background: "#FDF9F1", borderRadius: 4, padding: "4px 16px", margin: "14px 0 4px" }}>
+          {[["Fabric", "Kanchipuram silk weave"], ["Inclusions", "Unstitched blouse piece"], ["Dispatch", "Ships in 3–5 business days"]].map(([k, v], i) => (
+            <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "10px 0", borderTop: i ? `1px solid ${ZARI}22` : "none", fontSize: 12.5 }}>
+              <span style={{ color: "#8A6E3A", letterSpacing: "0.08em", textTransform: "uppercase", fontSize: 10.5 }}>{k}</span>
+              <span style={{ color: "#3D2A18", textAlign: "right" }}>{v}</span>
             </div>
           ))}
         </div>
 
-        <div style={{ display: "flex", gap: 10, marginBottom: 22 }}>
-          <button onClick={() => buy(false)} style={{ ...outlineBtn, flex: 1 }}>Add to cart</button>
-          <button onClick={() => buy(true)} style={{ ...solidBtn, flex: 1 }}>Buy now</button>
+        <div style={{ display: "flex", gap: 10, margin: "18px 0 8px", flexWrap: "wrap" }}>
+          <button onClick={() => buy(false)} style={{ ...outlineBtn, flex: 1, minWidth: 150 }}>Add to cart</button>
+          <button onClick={() => buy(true)} style={{ ...solidBtn, flex: 1, minWidth: 150 }}>Buy now</button>
+        </div>
+        <div aria-live="polite" style={{ minHeight: 22, marginBottom: 12 }}>
+          {added && (
+            <span style={{ fontSize: 13, color: "#3E6B48" }}>
+              Added to cart · <Link href="/cart" style={{ color: MAROON, textDecoration: "underline" }}>View cart</Link>
+            </span>
+          )}
         </div>
 
         <div style={{ background: "#fff", border: `1px solid ${GOLD}33`, borderRadius: 14, padding: 18 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ fontFamily: "Marcellus, serif", fontSize: 18 }}>Design studio</div>
-            <span style={{ fontSize: 11, color: TEAL, background: `${TEAL}15`, padding: "2px 8px", borderRadius: 20 }}>Optional</span>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 10, letterSpacing: "0.24em", textTransform: "uppercase", color: "#A87B22" }}>Make it yours</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 19, marginTop: 3 }}>Design studio</div>
           </div>
           <div style={{ display: "grid", gap: 12 }}>
             <ColorRow label="Saree colour" k="base" />
@@ -122,7 +132,10 @@ export default function ProductClient({
         </div>
 
         <div style={{ marginTop: 26 }}>
-          <div style={{ fontFamily: "Marcellus, serif", fontSize: 18, marginBottom: 10 }}>Ratings & reviews</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 12 }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 19 }}>Ratings &amp; reviews</div>
+            <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${ZARI}44, transparent)` }} />
+          </div>
           <div style={{ display: "grid", gap: 10, marginBottom: 16 }}>
             {reviews.reviews.length === 0 && <div style={{ fontSize: 13, opacity: 0.6 }}>Be the first to review this saree.</div>}
             {reviews.reviews.map((r, i) => (
@@ -130,7 +143,7 @@ export default function ProductClient({
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ fontSize: 13, fontWeight: 600 }}>{r.name}</span><Stars value={r.rating} size={13} />
                 </div>
-                <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4, lineHeight: 1.5 }}>{r.text}</div>
+                <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>{r.text}</div>
               </div>
             ))}
           </div>
